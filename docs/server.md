@@ -38,6 +38,21 @@ server/
 - Server validates against PostgreSQL, loads character, assigns to a starting zone.
 - On disconnect: persist character state, remove from zone, broadcast logout.
 
+## Action handling (intent → validate → broadcast)
+
+The core principle: the client sends *intent*, the server decides what happens, and only the resulting *state* is broadcast. The client never tells the server the outcome.
+
+1. **Netty I/O thread** receives the framed protobuf message. The `GameServerHandler` does no game logic — it only maps the channel to a player session and hands the message off.
+2. **Handoff to zone executor.** The handler submits the action to the executor of the zone the player belongs to. This guarantees the Netty I/O threads never block on game logic, and every action for a given zone is processed in a single, deterministic order.
+3. **Zone thread validates and applies.** Speed checks, collision, zone bounds, combat resolution, inventory rules — all run here, sequentially. Because one thread owns the zone, there are no locks between actions in the same zone.
+4. **Broadcast.** The resulting state change is sent only to players within visibility range (interest management), not to the whole server.
+
+### Client-side prediction
+
+- The client predicts its own movement locally to hide latency.
+- The server is always authoritative: on mismatch, the server's correction overwrites the client's prediction.
+- Prediction applies to the player's own actions only; other entities are rendered purely from server updates.
+
 ## Game logic (authoritative)
 
 - Client sends intents (move, attack, use item); server validates and applies.
