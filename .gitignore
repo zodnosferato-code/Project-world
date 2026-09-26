@@ -1,0 +1,28 @@
+# Java / Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+.idea/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+
+# Godot
+.godot/
+*.translation
+export.cfg
+
+# Local secrets and env
+*.local.properties
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/

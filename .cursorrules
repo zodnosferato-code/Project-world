@@ -1,0 +1,12 @@
+# Cursor rules — Project World (MMO)
+
+See AGENTS.md for the full instruction set. Summary for Cursor:
+
+- Stack: Godot 4 GDScript client, Java 21 Netty server, PostgreSQL, Protocol Buffers.
+- Read docs/ before writing code; docs are the design source of truth.
+- Server is authoritative: client sends intents, server validates and broadcasts state.
+- All messages via protocol/*.proto; regenerate bindings on both sides after changes.
+- Small commits, format: <type>: <summary>. No secrets in repo.
+- GDScript: snake_case, 4-space indent, signals over singletons.
+- Java: com.example.mmo.<layer>, Java 21, Maven, no blocking in Netty handlers.
+- Test before claiming done: mvn test for server; headless Godot for client.
